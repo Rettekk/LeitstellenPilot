@@ -1,0 +1,362 @@
+{
+  "fields": [
+    {
+      "key": "need_lf",
+      "caption": "Benötigte Löschfahrzeuge"
+    },
+    {
+      "key": "need_elw1",
+      "caption": "Benötigte ELW 1"
+    },
+    {
+      "key": "need_dlk",
+      "caption": "Benötigte Drehleitern"
+    },
+    {
+      "key": "water_needed",
+      "caption": "Wasserbedarf"
+    },
+    {
+      "key": "need_rw",
+      "caption": "Benötigte Rüstwagen"
+    },
+    {
+      "key": "need_elw2",
+      "caption": "Benötigte ELW 2"
+    },
+    {
+      "key": "need_gwl2wasser",
+      "caption": "Benötigte Schlauchwagen (GW-L2 Wasser, SW 1000, SW 2000 oder Ähnliches)"
+    },
+    {
+      "key": "foam_needed",
+      "caption": "Sonderlöschmittelbedarf"
+    },
+    {
+      "key": "need_gwa",
+      "caption": "Benötigte GW-A"
+    },
+    {
+      "key": "need_gwoil",
+      "caption": "Benötigte GW-Öl"
+    },
+    {
+      "key": "need_oneof_fire_engine_or_rescue",
+      "caption": "Benötigte Löschfahrzeuge oder Rüstwagen"
+    },
+    {
+      "key": "need_gwmess",
+      "caption": "Benötigte GW-Mess"
+    },
+    {
+      "key": "need_dekon_p",
+      "caption": "Benötigte Dekon-P"
+    },
+    {
+      "key": "need_gwgefahrgut",
+      "caption": "Benötigte GW-Gefahrgut"
+    },
+    {
+      "key": "need_streifenwagen",
+      "caption": "Benötigte Funkstreifenwagen"
+    },
+    {
+      "key": "need_oneof_police_patrol_or_motorcycle",
+      "caption": "Benötigte Funkstreifenwagen oder Polizeimotorräder"
+    },
+    {
+      "key": "need_oneof_police_patrol_or_civil_patrol",
+      "caption": "Benötigte Funkstreifenwagen oder Zivilstreifenwagen"
+    },
+    {
+      "key": "need_gwhoehenrettung",
+      "caption": "Benötigte GW-Höhenrettung"
+    },
+    {
+      "key": "need_oneof_police_patrol_or_civil_patrol_or_motorcycle",
+      "caption": "Benötigte Funkstreifenwagen oder Zivilstreifenwagen oder Polizeimotorrad"
+    },
+    {
+      "key": "need_k9",
+      "caption": "Benötigte DHuFüKW"
+    },
+    {
+      "key": "need_water_damage_pump",
+      "caption": "Benötigte Feuerlöschpumpen (z. B. LF)"
+    },
+    {
+      "key": "need_oneof_fire_engine_or_rescue_or_oil_equipment",
+      "caption": "Benötigte Löschfahrzeuge, Rüstwagen oder Gerätewagen Öl"
+    },
+    {
+      "key": "need_fwk",
+      "caption": "Benötigte Feuerwehrkräne (FwK)"
+    },
+    {
+      "key": "need_helicopter_bucket",
+      "caption": "Benötigte Außenlastbehälter (allgemein)"
+    },
+    {
+      "key": "need_thw_gkw",
+      "caption": "Benötigte GKW"
+    },
+    {
+      "key": "need_thw_mtwtz",
+      "caption": "Benötigte MTW-TZ"
+    },
+    {
+      "key": "need_thw_mzkw",
+      "caption": "Benötigte MzGW (FGr N)"
+    },
+    {
+      "key": "need_grukw",
+      "caption": "Benötigte GruKw"
+    },
+    {
+      "key": "need_lebefkw",
+      "caption": "Benötigte leBefKw"
+    },
+    {
+      "key": "need_gefkw",
+      "caption": "Benötigte GefKw"
+    },
+    {
+      "key": "need_fukw",
+      "caption": "Benötigte FüKW (Polizei)"
+    },
+    {
+      "key": "need_rtw",
+      "caption": "Benötigte RTW"
+    },
+    {
+      "key": "need_gw_san",
+      "caption": "Benötigte GW-San"
+    },
+    {
+      "key": "need_polizeihubschrauber",
+      "caption": "Benötigte Polizeihubschrauber"
+    },
+    {
+      "key": "need_boot",
+      "caption": "Benötigte Boote"
+    },
+    {
+      "key": "need_gwtaucher",
+      "caption": "Benötigte GW-Taucher"
+    },
+    {
+      "key": "need_wasserwerfer",
+      "caption": "Benötigte Wasserwerfer"
+    },
+    {
+      "key": "need_arff",
+      "caption": "Benötigte Flugfeldlöschfahrzeuge"
+    },
+    {
+      "key": "need_rettungstreppe",
+      "caption": "Benötigte Rettungstreppen"
+    },
+    {
+      "key": "need_mek",
+      "caption": "Benötigte MEK-Fahrzeuge"
+    },
+    {
+      "key": "need_sek",
+      "caption": "Benötigte SEK-Fahrzeuge"
+    },
+    {
+      "key": "need_gw_werkfeuerwehr",
+      "caption": "Benötigte GW-Werkfeuerwehr"
+    },
+    {
+      "key": "need_teleskopmast",
+      "caption": "Benötigte Teleskopmasten"
+    },
+    {
+      "key": "need_turboloescher",
+      "caption": "Benötigte Turbolöscher"
+    },
+    {
+      "key": "need_ulf",
+      "caption": "Benötigte ULF mit Löscharm"
+    },
+    {
+      "key": "need_rescue_dog_units",
+      "caption": "Benötigte Rettungshundestaffeln"
+    },
+    {
+      "key": "need_seg_elw",
+      "caption": "Benötigte ELW 1 (SEG)"
+    },
+    {
+      "key": "need_civil_patrolcar",
+      "caption": "Benötigte Zivilstreifenwagen"
+    },
+    {
+      "key": "need_highway_police",
+      "caption": "Benötigte FuStW (AP)"
+    },
+    {
+      "key": "need_pump",
+      "caption": "Benötigte Schmutzwasserpumpen"
+    },
+    {
+      "key": "min_pump_speed",
+      "caption": "Min. Pumpenleistung"
+    },
+    {
+      "key": "need_police_service_group_leader",
+      "caption": "Benötigte Funkstreifenwagen (Dienstgruppenleitung)"
+    },
+    {
+      "key": "need_energy_supply",
+      "caption": "Benötigte NEA50"
+    },
+    {
+      "key": "need_energy_supply_2",
+      "caption": "Benötigte NEA200"
+    },
+    {
+      "key": "need_police_motorcycle",
+      "caption": "Benötigte Polizeimotorräder"
+    },
+    {
+      "key": "need_police_horse",
+      "caption": "Benötigte Polizeipferde"
+    },
+    {
+      "key": "need_mountain_height_rescue",
+      "caption": "Benötigte Höhenrettung (Bergrettung)"
+    },
+    {
+      "key": "need_mountain",
+      "caption": "Benötigte Bergrettungsfahrzeuge"
+    },
+    {
+      "key": "need_mountain_equipment",
+      "caption": "Benötigte GW-Bergrettung"
+    },
+    {
+      "key": "need_mountain_snow",
+      "caption": "Benötigte Schneefahrzeuge"
+    },
+    {
+      "key": "need_lift",
+      "caption": "Benötigte Hubschrauber mit Winde"
+    },
+    {
+      "key": "need_mountain_command",
+      "caption": "Benötigte ELW Bergrettung"
+    },
+    {
+      "key": "need_mountain_atv",
+      "caption": "Benötigte ATV"
+    },
+    {
+      "key": "need_oneof_coastal_rescue_boat_or_boat_large",
+      "caption": "Benötigte Seenotrettungsboote oder Seenotrettungskreuzer"
+    },
+    {
+      "key": "need_coastal_helicopter",
+      "caption": "Benötigte Hubschrauber (Seenotrettung)"
+    },
+    {
+      "key": "need_coastal_boat_large",
+      "caption": "Benötigte Seenotrettungskreuzer"
+    },
+    {
+      "key": "need_heavy_rescue",
+      "caption": "Benötigte MzGW SB"
+    },
+    {
+      "key": "need_railway_fire",
+      "caption": "Benötigte Bahnrettungsfahrzeuge"
+    },
+    {
+      "key": "need_police_speaker",
+      "caption": "Benötigte LauKw"
+    },
+    {
+      "key": "need_thw_bridge_construction_equipment",
+      "caption": "Benötigte MzGW (FGr BrB)"
+    },
+    {
+      "key": "need_thw_bridge_construction_crane",
+      "caption": "Benötigte Mobilkräne"
+    },
+    {
+      "key": "need_thw_bridge_construction_trailer",
+      "caption": "Benötigte Anh Plattform (FGr BrB)"
+    },
+    {
+      "key": "need_animal_rescue",
+      "caption": "Benötigte GW-Tierrettung"
+    },
+    {
+      "key": "need_ventilation",
+      "caption": "Benötigte Lüfter"
+    },
+    {
+      "key": "need_drone",
+      "caption": "Benötigte Drohneneinheiten"
+    },
+    {
+      "key": "need_care_service",
+      "caption": "Benötigte Bt-Kombi"
+    },
+    {
+      "key": "need_care_service_equipment",
+      "caption": "Benötigte Betreuungs- und Verpflegungsausstattungen"
+    },
+    {
+      "key": "need_thw_command",
+      "caption": "Benötigte FüKW (THW)"
+    },
+    {
+      "key": "need_thw_command_2",
+      "caption": "Benötigte FüKomKW"
+    },
+    {
+      "key": "need_thw_command_3",
+      "caption": "Benötigte FmKW"
+    },
+    {
+      "key": "need_thw_command_4",
+      "caption": "Benötigte MTW FGr K"
+    },
+    {
+      "key": "need_thw_command_trailer",
+      "caption": "Benötigte Anh FüLa"
+    },
+    {
+      "key": "need_coastal_boat",
+      "caption": "Benötigte Seenotrettungsboote"
+    },
+    {
+      "key": "need_disaster_response_technology_equipment",
+      "caption": "Benötigte GW-TeSi"
+    },
+    {
+      "key": "need_disaster_response_technology_energy",
+      "caption": "Benötigte LKW Technik (Notstrom)"
+    },
+    {
+      "key": "need_disaster_response_technology_crew",
+      "caption": "Benötigte MTW-TeSi"
+    },
+    {
+      "key": "need_disaster_response_technology_trailer",
+      "caption": "Benötigte Anh TeSi"
+    },
+    {
+      "key": "need_brush_truck",
+      "caption": "Benötigte TLF-W"
+    },
+    {
+      "key": "need_wildfire_equipment",
+      "caption": "Benötigte GW-Waldbrand"
+    }
+  ],
+  "fetchedAtUtc": "2026-10-11T14:56:03.6536836Z",
+  "source": "https://www.leitstellenspiel.de/api/mission_type_data"
+}

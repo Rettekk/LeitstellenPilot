@@ -1,0 +1,224 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:LeitstellenPilot.ViewModels" xmlns:views="using:LeitstellenPilot.Views"
+             x:Class="LeitstellenPilot.Views.AutomationSettingsView" x:DataType="vm:MainWindowViewModel" FontSize="14">
+    <UserControl.Styles>
+        <Style Selector="NumericUpDown.compact-number">
+            <Setter Property="ShowButtonSpinner" Value="False"/>
+            <Setter Property="TextAlignment" Value="Center"/>
+            <Setter Property="MinWidth" Value="0"/>
+            <Setter Property="MinHeight" Value="38"/>
+            <Setter Property="Padding" Value="4,6"/>
+            <Setter Property="CornerRadius" Value="7"/>
+            <Setter Property="FormatString" Value="0"/>
+            <Setter Property="ClipValueToMinMax" Value="True"/>
+        </Style>
+        <Style Selector="TextBox.pause-clock">
+            <Setter Property="Width" Value="86"/>
+            <Setter Property="MinHeight" Value="38"/>
+            <Setter Property="TextAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Background" Value="#18212D"/>
+            <Setter Property="BorderBrush" Value="#40516A"/>
+            <Setter Property="CornerRadius" Value="7"/>
+            <Setter Property="Foreground" Value="#EDF3F7"/>
+            <Setter Property="MaxLength" Value="5"/>
+            <Setter Property="Watermark" Value="HH:mm"/>
+        </Style>
+        <Style Selector="TextBlock.pause-unit">
+            <Setter Property="Foreground" Value="#A7BBD3"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        <Style Selector="Border.pause-card, Border.settings-card"><Setter Property="CornerRadius" Value="14"/></Style>
+    </UserControl.Styles>
+    <Grid Margin="0,8,0,0">
+        <TabControl x:Name="AutomationSections">
+            <TabItem Header="Disposition">
+                <ScrollViewer Margin="0,12,0,0">
+                    <Grid x:Name="DispatchSettingsLayout" ColumnDefinitions="*,*" ColumnSpacing="16" RowSpacing="16">
+                        <Border x:Name="DispatchSettingsCard" Classes="card settings-card" VerticalAlignment="Top"><StackPanel Spacing="16">
+                            <Grid ColumnDefinitions="*,Auto"><TextBlock Text="Einsatzsteuerung" Classes="heading"/></Grid>
+                            <Grid ColumnDefinitions="*,56" ColumnSpacing="12">
+                                <TextBlock Text="Parallele Einsätze" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                                <views:SettingsNumberInput x:Name="ParallelMissionsOption" Grid.Column="1" Classes="automation-input compact-number" Minimum="1" Maximum="100" Value="{Binding MaxConcurrentMissions}" AutomationProperties.Name="Maximal parallele Einsätze"/>
+                            </Grid>
+                            <StackPanel Spacing="4">
+                                <Grid ColumnDefinitions="*,56" ColumnSpacing="12">
+                                    <TextBlock Text="Max. Anfahrt (Min.)" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                                    <views:SettingsNumberInput x:Name="MaxApproachOption" Grid.Column="1" Classes="automation-input compact-number" Minimum="0" Maximum="240" Value="{Binding MaxApproachMinutes}" AutomationProperties.Name="Maximale Anfahrt in Minuten"/>
+                                </Grid>
+                                <TextBlock Text="0 = ohne Begrenzung" Classes="muted" FontSize="12"/>
+                            </StackPanel>
+                            <Grid ColumnDefinitions="*,Auto"><ToggleSwitch x:Name="CreditPriorityOption" IsChecked="{Binding PreferHighCreditMissions}"><TextBlock Text="Mehr Credits bevorzugen" TextWrapping="Wrap"/></ToggleSwitch></Grid>
+                            <Grid ColumnDefinitions="*,Auto"><ToggleSwitch x:Name="ReassignmentOption" IsChecked="{Binding ReassignBlockedMissions}"><TextBlock Text="Fahrzeuge umverteilen" TextWrapping="Wrap"/></ToggleSwitch></Grid>
+                            <Grid ColumnDefinitions="*,Auto"><ToggleSwitch x:Name="UnsolvableReleaseOption" IsChecked="{Binding ReleaseUnsolvableMissions}"><TextBlock Text="Unlösbare Einsätze freigeben" TextWrapping="Wrap"/></ToggleSwitch></Grid>
+                        </StackPanel></Border>
+                        <Border x:Name="PlannedSettingsCard" Grid.Column="1" Classes="card settings-card" VerticalAlignment="Top"><StackPanel Spacing="16">
+                            <Grid ColumnDefinitions="*,Auto"><TextBlock Text="Geplante Einsätze" Classes="heading"/></Grid>
+                            <Grid ColumnDefinitions="*,Auto"><ToggleSwitch x:Name="PlannedMissionsOption" Content="Automatisch anfahren" IsChecked="{Binding AutoPlannedMissions}"/></Grid>
+                            <StackPanel x:Name="PlannedSettingsFields" Spacing="14" IsVisible="{Binding AutoPlannedMissions}" IsEnabled="{Binding AutoPlannedMissions}">
+                                <Grid ColumnDefinitions="*,156" ColumnSpacing="12">
+                                    <TextBlock Text="Max. Einsatzdauer" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                                    <ComboBox x:Name="PlannedDurationOption" Grid.Column="1" SelectedIndex="{Binding PlannedDurationLimitIndex}" HorizontalAlignment="Stretch" AutomationProperties.Name="Maximale Einsatzdauer">
+                                        <ComboBoxItem Content="Bis 1 Stunde"/>
+                                        <ComboBoxItem Content="Bis 2 Stunden"/>
+                                        <ComboBoxItem Content="Bis 3 Stunden"/>
+                                        <ComboBoxItem Content="Unbegrenzt"/>
+                                    </ComboBox>
+                                </Grid>
+                                <Grid ColumnDefinitions="*,56,36" ColumnSpacing="8">
+                                    <TextBlock Text="Ankunftspuffer" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                                    <views:SettingsNumberInput x:Name="PlannedBufferOption" Grid.Column="1" Value="{Binding PlannedBufferMinutes}" Minimum="1" Maximum="15" Classes="automation-input compact-number" AutomationProperties.Name="Ankunftspuffer in Minuten"/>
+                                    <TextBlock Grid.Column="2" Text="Min." Classes="pause-unit"/>
+                                </Grid>
+                                <Grid ColumnDefinitions="*,56,36" ColumnSpacing="8">
+                                    <TextBlock Text="Reserve für normale Einsätze" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                                    <views:SettingsNumberInput x:Name="PlannedReserveOption" Grid.Column="1" Value="{Binding PlannedFleetReservePercent}" Minimum="0" Maximum="90" Increment="10" Classes="automation-input compact-number" AutomationProperties.Name="Reserve für normale Einsätze in Prozent"/>
+                                    <TextBlock Grid.Column="2" Text="%" Classes="pause-unit"/>
+                                </Grid>
+                            </StackPanel>
+                        </StackPanel></Border>
+                    </Grid>
+                </ScrollViewer>
+            </TabItem>
+            <TabItem Header="Pausen">
+                <ScrollViewer Margin="0,12,0,0">
+                    <Grid x:Name="PauseSettingsLayout" ColumnDefinitions="*,*" ColumnSpacing="16" RowSpacing="16">
+                        <Border x:Name="DelaySettingsCard" Classes="card pause-card"><StackPanel Spacing="22">
+                            <TextBlock Text="Wartezeiten" Classes="heading"/>
+                            <Grid ColumnDefinitions="*,56,Auto,56,Auto" RowDefinitions="Auto,Auto,Auto,Auto" ColumnSpacing="8" RowSpacing="18">
+                                <TextBlock Text="Aktionen" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                                <views:SettingsNumberInput x:Name="ActionDelayMinOption" Grid.Column="1" Classes="automation-input pause-number compact-number" Minimum="1" Maximum="300" Value="{Binding MinActionDelaySeconds}" AutomationProperties.Name="Aktionen: mindestens Sekunden"/>
+                                <TextBlock Grid.Column="2" Text="bis" Classes="pause-unit"/>
+                                <views:SettingsNumberInput x:Name="ActionDelayMaxOption" Grid.Column="3" Classes="automation-input pause-number compact-number" Minimum="{Binding MinActionDelaySeconds}" Maximum="300" Value="{Binding MaxActionDelaySeconds}" AutomationProperties.Name="Aktionen: höchstens Sekunden"/>
+                                <TextBlock Grid.Column="4" Text="s" Classes="pause-unit"/>
+
+                                <TextBlock Grid.Row="1" Text="Personal" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                                <views:SettingsNumberInput x:Name="PersonnelActionMinOption" Grid.Row="1" Grid.Column="1" Classes="automation-input pause-number compact-number" Minimum="1" Maximum="300" Value="{Binding MinPersonnelActionDelaySeconds}" AutomationProperties.Name="Personalaktionen: mindestens Sekunden"/>
+                                <TextBlock Grid.Row="1" Grid.Column="2" Text="bis" Classes="pause-unit"/>
+                                <views:SettingsNumberInput x:Name="PersonnelActionMaxOption" Grid.Row="1" Grid.Column="3" Classes="automation-input pause-number compact-number" Minimum="{Binding MinPersonnelActionDelaySeconds}" Maximum="300" Value="{Binding MaxPersonnelActionDelaySeconds}" AutomationProperties.Name="Personalaktionen: höchstens Sekunden"/>
+                                <TextBlock Grid.Row="1" Grid.Column="4" Text="s" Classes="pause-unit"/>
+
+                                <TextBlock Grid.Row="2" Text="Statusabfragen" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                                <views:SettingsNumberInput x:Name="StatusPollMinOption" Grid.Row="2" Grid.Column="1" Classes="automation-input pause-number compact-number" Minimum="5" Maximum="300" Value="{Binding ScanIntervalSeconds}" AutomationProperties.Name="Statusabfragen: mindestens Sekunden"/>
+                                <TextBlock Grid.Row="2" Grid.Column="2" Text="bis" Classes="pause-unit"/>
+                                <views:SettingsNumberInput x:Name="StatusPollMaxOption" Grid.Row="2" Grid.Column="3" Classes="automation-input pause-number compact-number" Minimum="{Binding ScanIntervalSeconds}" Maximum="300" Value="{Binding MaxScanIntervalSeconds}" AutomationProperties.Name="Statusabfragen: höchstens Sekunden"/>
+                                <TextBlock Grid.Row="2" Grid.Column="4" Text="s" Classes="pause-unit"/>
+
+                                <TextBlock Grid.Row="3" Text="Nachforderungen" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                                <views:SettingsNumberInput x:Name="DetailReviewMinOption" Grid.Row="3" Grid.Column="1" Classes="automation-input pause-number compact-number" Minimum="10" Maximum="120" Value="{Binding DetailReviewIntervalSeconds}" AutomationProperties.Name="Nachforderungen: mindestens Sekunden"/>
+                                <TextBlock Grid.Row="3" Grid.Column="2" Text="bis" Classes="pause-unit"/>
+                                <views:SettingsNumberInput x:Name="DetailReviewMaxOption" Grid.Row="3" Grid.Column="3" Classes="automation-input pause-number compact-number" Minimum="{Binding DetailReviewIntervalSeconds}" Maximum="120" Value="{Binding MaxDetailReviewIntervalSeconds}" AutomationProperties.Name="Nachforderungen: höchstens Sekunden"/>
+                                <TextBlock Grid.Row="3" Grid.Column="4" Text="s" Classes="pause-unit"/>
+                            </Grid>
+                            <Separator Background="#37485E"/>
+                            <ToggleSwitch x:Name="AdaptivePollingOption" IsChecked="{Binding AdaptivePolling}" AutomationProperties.Name="Bei wenig Aktivität seltener prüfen">
+                                <StackPanel Spacing="3"><TextBlock Text="Bei wenig Aktivität"/><TextBlock Text="Seltener nach Einsätzen schauen" FontSize="12" Foreground="#A7BBD3" TextWrapping="Wrap"/></StackPanel>
+                            </ToggleSwitch>
+                        </StackPanel></Border>
+                        <Border x:Name="RestSettingsCard" Grid.Column="1" Classes="card pause-card"><StackPanel Spacing="16">
+                            <TextBlock Text="Ruhezeiten" Classes="heading" Margin="0,0,0,6"/>
+                            <ToggleSwitch x:Name="WorkRestCycleOption" Content="Arbeitsrhythmus" IsChecked="{Binding WorkRestCycleEnabled}"/>
+                            <StackPanel x:Name="WorkRestFields" Orientation="Horizontal" Spacing="24" IsVisible="{Binding WorkRestCycleEnabled}">
+                                <StackPanel Spacing="8"><TextBlock Text="Betrieb" FontSize="12" Foreground="#A7BBD3"/>
+                                    <StackPanel Orientation="Horizontal" Spacing="8"><views:SettingsNumberInput x:Name="WorkHoursOption" ParsingNumberStyle="Number" Width="56" Classes="automation-input pause-number compact-number" Minimum="0.25" Maximum="24" Increment="0.25" FormatString="0.##" Value="{Binding WorkHours}" AutomationProperties.Name="Betrieb in Stunden"/><TextBlock Text="Std." Classes="pause-unit"/></StackPanel>
+                                </StackPanel>
+                                <StackPanel Spacing="8"><TextBlock Text="Pause" FontSize="12" Foreground="#A7BBD3"/>
+                                    <StackPanel Orientation="Horizontal" Spacing="8"><views:SettingsNumberInput x:Name="RestMinutesOption" ParsingNumberStyle="Number" Width="62" Classes="automation-input pause-number compact-number" Minimum="15" Maximum="1440" Increment="15" FormatString="0.##" Value="{Binding RestMinutes}" AutomationProperties.Name="Pause in Minuten"/><TextBlock Text="Min." Classes="pause-unit"/></StackPanel>
+                                </StackPanel>
+                            </StackPanel>
+                            <Separator Background="#37485E" Margin="0,6"/>
+                            <ToggleSwitch x:Name="NightRestOption" Content="Nachtruhe" IsChecked="{Binding NightRestEnabled}"/>
+                            <StackPanel x:Name="NightRestPanel" Spacing="18" IsVisible="{Binding NightRestEnabled}" IsEnabled="{Binding NightRestEnabled}">
+                                <StackPanel Orientation="Horizontal" Spacing="12">
+                                    <TextBox x:Name="NightRestStartInput" Classes="pause-clock" Text="{Binding NightRestStartText}" AutomationProperties.Name="Nachtruhe von, Stunde und Minute"/>
+                                    <TextBlock Text="bis" Classes="pause-unit"/>
+                                    <TextBox x:Name="NightRestEndInput" Classes="pause-clock" Text="{Binding NightRestEndText}" AutomationProperties.Name="Nachtruhe bis, Stunde und Minute"/>
+                                </StackPanel>
+                                <TextBlock Text="{Binding NightRestValidation}" IsVisible="{Binding HasNightRestValidation}" Foreground="#E9C07B" TextWrapping="Wrap"/>
+                                <Border BorderBrush="#37485E" BorderThickness="2,0,0,0" Padding="12,0,0,0">
+                                    <ToggleSwitch x:Name="PersonnelAfterNightTimingOption" IsChecked="{Binding AutoPersonnelAfterNightRest}" AutomationProperties.Name="Nach der Nachtruhe Personal prüfen und verteilen">
+                                        <StackPanel Spacing="3"><TextBlock Text="Danach Personal prüfen" TextWrapping="Wrap"/><TextBlock Text="Vor der ersten Alarmierung" FontSize="12" Foreground="#A7BBD3" TextWrapping="Wrap"/></StackPanel>
+                                    </ToggleSwitch>
+                                </Border>
+                            </StackPanel>
+                        </StackPanel></Border>
+                    </Grid>
+                </ScrollViewer>
+            </TabItem>
+            <TabItem Header="Zusatzaktionen">
+                <ScrollViewer Margin="0,12,0,0"><Grid x:Name="TransportSettingsLayout" ColumnDefinitions="*,*" ColumnSpacing="14" RowSpacing="14">
+                    <Border x:Name="TransportSettingsCard" Classes="card" VerticalAlignment="Top"><StackPanel Spacing="14">
+                        <TextBlock Text="Transporte" Classes="heading"/>
+                        <Grid ColumnDefinitions="*,Auto"><ToggleSwitch IsChecked="{Binding AutoTransport}"><TextBlock Text="Automatisch bearbeiten" TextWrapping="Wrap"/></ToggleSwitch></Grid>
+                        <Grid ColumnDefinitions="*,Auto"><ToggleSwitch x:Name="ReleasePatientsOption" IsChecked="{Binding ReleasePatientsWithoutBed}" IsEnabled="{Binding AutoTransport}"><TextBlock Text="Ohne freies Bett entlassen" TextWrapping="Wrap"/></ToggleSwitch></Grid>
+                        <Grid ColumnDefinitions="*,Auto" IsEnabled="{Binding AutoTransport}">
+                            <TextBlock Text="Auf ein Bett warten" VerticalAlignment="Center"/>
+                            <ComboBox x:Name="HospitalWaitOption" Grid.Column="1" Width="110" SelectedIndex="{Binding HospitalWaitIndex}">
+                                <ComboBoxItem Content="5 Min."/><ComboBoxItem Content="10 Min."/><ComboBoxItem Content="15 Min."/>
+                            </ComboBox>
+                        </Grid>
+                        <Grid ColumnDefinitions="*,Auto"><ToggleSwitch IsChecked="{Binding ReleasePrisonersWithoutCell}" IsEnabled="{Binding AutoTransport}"><TextBlock Text="Ohne freie Zelle entlassen" TextWrapping="Wrap"/></ToggleSwitch></Grid>
+                    </StackPanel></Border>
+                    <Border x:Name="RewardSettingsCard" Grid.Column="1" Classes="card" VerticalAlignment="Top"><StackPanel Spacing="14">
+                        <TextBlock Text="Belohnungen" Classes="heading"/>
+                        <Grid ColumnDefinitions="*,Auto"><ToggleSwitch IsChecked="{Binding AutoClaimDailyBonus}"><TextBlock Text="Tagesbonus abholen" TextWrapping="Wrap"/></ToggleSwitch></Grid>
+                        <Grid ColumnDefinitions="*,Auto"><ToggleSwitch x:Name="TaskRewardsOption" IsChecked="{Binding AutoClaimTaskRewards}"><TextBlock Text="Aufgaben und Events abholen" TextWrapping="Wrap"/></ToggleSwitch></Grid>
+                        <Grid ColumnDefinitions="*,Auto"><ToggleSwitch x:Name="PromotionOption" IsChecked="{Binding AutoPromotion}"><TextBlock Text="Beförderungen abholen" TextWrapping="Wrap"/></ToggleSwitch></Grid>
+                        <Grid ColumnDefinitions="*,Auto"><ToggleSwitch x:Name="EventItemsOption" IsChecked="{Binding AutoCollectEventItems}"><TextBlock Text="Kürbisse einsammeln" TextWrapping="Wrap"/></ToggleSwitch></Grid>
+                    </StackPanel></Border>
+                </Grid></ScrollViewer>
+            </TabItem>
+            <TabItem Header="Start &amp; Anmeldung">
+                <StackPanel>
+                    <views:StartupSettingsView x:Name="StartupOptions"/>
+
+                </StackPanel>
+            </TabItem>
+            <TabItem Header="Wachenausbau" x:Name="StationUpgradeSettingsTab">
+                <ScrollViewer Margin="0,12,0,0">
+                    <Border Classes="card settings-card" HorizontalAlignment="Stretch" VerticalAlignment="Top">
+                        <StackPanel Spacing="14">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <ToggleSwitch x:Name="StationUpgradeEnabledOption" IsChecked="{Binding StationUpgradeEnabled}" Content="Wachen automatisch ausbauen"/>
+                                
+                            </Grid>
+                            <StackPanel x:Name="StationUpgradeFields" Spacing="14" IsVisible="{Binding StationUpgradeEnabled}">
+                                <WrapPanel>
+                                    <ToggleSwitch x:Name="UpgradeFireStationsOption" IsChecked="{Binding UpgradeFireStations}" Content="Feuerwehr" Margin="0,0,16,0"/>
+                                    <ToggleSwitch x:Name="UpgradePoliceStationsOption" IsChecked="{Binding UpgradePoliceStations}" Content="Polizei" Margin="0,0,16,0"/>
+                                    <ToggleSwitch x:Name="UpgradeRescueStationsOption" IsChecked="{Binding UpgradeRescueStations}" Content="Rettungsdienst"/>
+                                </WrapPanel>
+                                <Grid ColumnDefinitions="*,250" ColumnSpacing="12">
+                                    <TextBlock Text="Reihenfolge" VerticalAlignment="Center"/>
+                                    <ComboBox x:Name="StationUpgradeOrderOption" Grid.Column="1" SelectedIndex="{Binding StationUpgradeOrder}" HorizontalAlignment="Stretch">
+                                        <ComboBoxItem Content="Günstigste zuerst"/><ComboBoxItem Content="Niedrigste Stufe zuerst"/><ComboBoxItem Content="Zufällig"/>
+                                    </ComboBox>
+                                </Grid>
+                                <Grid ColumnDefinitions="*,250" ColumnSpacing="12">
+                                    <TextBlock Text="Ziel" VerticalAlignment="Center"/>
+                                    <ComboBox x:Name="StationUpgradeTargetModeOption" Grid.Column="1" SelectedIndex="{Binding StationUpgradeTargetMode}" HorizontalAlignment="Stretch"><ComboBoxItem Content="Jeweilige Maximalstufe"/><ComboBoxItem Content="Bis zu einer festen Stufe"/></ComboBox>
+                                </Grid>
+                                <Grid ColumnDefinitions="*,100" ColumnSpacing="12" IsVisible="{Binding HasStationUpgradeTarget}"><TextBlock Text="Bis Stufe" VerticalAlignment="Center"/><views:SettingsNumberInput x:Name="StationUpgradeTargetOption" Grid.Column="1" Classes="automation-input compact-number" Minimum="1" Maximum="30" Value="{Binding StationUpgradeFixedTarget}" AutomationProperties.Name="Zielstufe für Wachenausbau"/></Grid>
+                                <Grid ColumnDefinitions="*,156" ColumnSpacing="12"><TextBlock Text="Credit-Reserve" VerticalAlignment="Center"/><views:SettingsNumberInput x:Name="StationUpgradeReserveOption" Grid.Column="1" Classes="automation-input compact-number" Minimum="0" Maximum="1000000000" Increment="10000" FormatString="N0" Value="{Binding StationUpgradeReserveCredits}" AutomationProperties.Name="Credit-Reserve für Wachenausbau"/></Grid>
+                                <Grid ColumnDefinitions="*,156" ColumnSpacing="12">
+                                    <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                                        <TextBlock Text="Tagesbudget (Credits)" VerticalAlignment="Center"/>
+                                        
+                                    </StackPanel>
+                                    <views:SettingsNumberInput x:Name="StationUpgradeBudgetOption" Grid.Column="1" Classes="automation-input compact-number" Minimum="0" Maximum="1000000000" Increment="10000" FormatString="N0" Value="{Binding StationUpgradeDailyBudgetCredits}" AutomationProperties.Name="Tagesbudget für Wachenausbau"/>
+                                </Grid>
+                                <TextBlock Text="Tagesbudget 0 = kein Tageslimit" Classes="muted" FontSize="12" HorizontalAlignment="Right" Margin="0,-6,0,0"/>
+                                <Grid ColumnDefinitions="*,100" ColumnSpacing="12"><TextBlock Text="Prüfabstand (Min.)" VerticalAlignment="Center"/><views:SettingsNumberInput x:Name="StationUpgradeIntervalOption" Grid.Column="1" Classes="automation-input compact-number" Minimum="1" Maximum="1440" Value="{Binding StationUpgradeIntervalMinutes}" AutomationProperties.Name="Abstand zwischen Wachenausbauten in Minuten"/></Grid>
+                            </StackPanel>
+                            <TextBlock x:Name="StationUpgradeStatusText" Text="{Binding StationUpgradeStatus}" IsVisible="{Binding HasStationUpgradeStatus}" Classes="muted" TextWrapping="Wrap"/>
+                            <StackPanel IsVisible="{Binding HasUnconfirmedStationUpgrade}" Spacing="8">
+                                <TextBlock Text="Wache im Spiel prüfen. Zum Freigeben die Ausbauautomatik zuerst ausschalten." TextWrapping="Wrap" Classes="muted"/>
+                                <Button x:Name="AcknowledgeStationUpgradeButton" Content="Nach Prüfung freigeben" Command="{Binding AcknowledgeStationUpgradeCommand}" HorizontalAlignment="Left"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+                </ScrollViewer>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</UserControl>

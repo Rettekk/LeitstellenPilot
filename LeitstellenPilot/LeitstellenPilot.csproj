@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <AssemblyName>LeitstellenPilot</AssemblyName>
+    <RootNamespace>LeitstellenPilot</RootNamespace>
+    <AssemblyTitle>LeitstellenPilot</AssemblyTitle>
+    <Product>LeitstellenPilot</Product>
+    <ApplicationIcon>Assets\leitstellenpilot.ico</ApplicationIcon>
+    <Nullable>enable</Nullable>
+    <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <AvaloniaResource Include="Assets\leitstellenpilot-logo.png" />
+    <AvaloniaResource Include="Assets\leitstellenpilot.ico" />
+    <EmbeddedResource Include="Assets\vehicle-types.json" />
+    <EmbeddedResource Include="Assets\dispatch-rules.json" />
+    <EmbeddedResource Include="Assets\requirement-labels.json" />
+    <EmbeddedResource Include="Assets\mission-field-labels.json" />
+    <EmbeddedResource Include="Assets\missing-requirement-labels.json" />
+    <EmbeddedResource Include="Assets\mission-types.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="11.3.0" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.3.0" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.0" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Version="11.3.0" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.1" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.12.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="10.0.0" />
+    <!-- Backported fix for GHSA-xrw6-gwf8-vvr9 in Avalonia's Linux dependency. -->
+    <PackageReference Include="Tmds.DBus.Protocol" Version="0.21.3" />
+  </ItemGroup>
+
+</Project>

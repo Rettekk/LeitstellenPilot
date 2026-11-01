@@ -1,0 +1,26 @@
+[Unit]
+Description=LeitstellenPilot Standalone
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=leitstellenpilot
+Group=leitstellenpilot
+StateDirectory=LSS
+CacheDirectory=LSS
+WorkingDirectory=/var/lib/LSS
+Environment=DOTNET_BUNDLE_EXTRACT_BASE_DIR=/var/cache/LSS/dotnet-bundle
+ExecStart=/opt/leitstellenpilot/LeitstellenPilot --headless --config /var/lib/LSS/config.json
+Restart=on-failure
+RestartSec=15
+RestartPreventExitStatus=2 4
+TimeoutStopSec=45
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+
+[Install]
+WantedBy=multi-user.target

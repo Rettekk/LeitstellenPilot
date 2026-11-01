@@ -1,0 +1,57 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:LeitstellenPilot.ViewModels"
+             x:Class="LeitstellenPilot.Views.PersonnelView" x:DataType="vm:MainWindowViewModel">
+    <Grid RowDefinitions="Auto,Auto,*" RowSpacing="12" Margin="0,12,0,0">
+        <Border Classes="card"><StackPanel Spacing="12">
+            <TextBlock Text="Personal" Classes="heading"/>
+            <WrapPanel>
+                <Button x:Name="OptimizePersonnelButton" Classes="primary" Content="Alle Wachen prüfen und verteilen" Command="{Binding OptimizePersonnelCommand}" Margin="0,0,10,6"/>
+                <Button x:Name="CancelPersonnelButton" Content="Abbrechen" Command="{Binding CancelPersonnelCommand}" IsVisible="{Binding PersonnelBusy}" Margin="0,0,0,6"/>
+            </WrapPanel>
+            <ToggleSwitch x:Name="PersonnelAfterNightOption" IsChecked="{Binding AutoPersonnelAfterNightRest}">
+                <TextBlock Text="Nach der Nachtruhe automatisch prüfen" TextWrapping="Wrap"/>
+            </ToggleSwitch>
+        </StackPanel></Border>
+        <StackPanel Grid.Row="1" Spacing="8">
+            <ProgressBar IsIndeterminate="True" IsVisible="{Binding PersonnelBusy}" Height="3"/>
+            <TextBlock x:Name="PersonnelStatusText" Text="{Binding PersonnelStatus}" TextWrapping="Wrap" Foreground="#A5B4C8"/>
+            <TextBlock Text="{Binding PersonnelRunNotice}" IsVisible="{Binding HasPersonnelRunNotice}" TextWrapping="Wrap" Foreground="#E9C07B"/>
+        </StackPanel>
+        <ScrollViewer Grid.Row="2"><StackPanel Spacing="12">
+            <ItemsControl x:Name="PersonnelProblemList" ItemsSource="{Binding PersonnelProblems}">
+                <ItemsControl.ItemTemplate><DataTemplate x:DataType="vm:PersonnelStationViewModel">
+                    <Border Classes="card" Margin="0,0,0,10"><StackPanel Spacing="8">
+                        <TextBlock Text="{Binding Name}" FontWeight="SemiBold"/>
+                        <TextBlock Text="{Binding State}" Foreground="{Binding StateColor}"/>
+                        <TextBlock Text="{Binding Notice}" TextWrapping="Wrap"/>
+                        <Expander Classes="quiet" Header="Details" IsExpanded="False">
+                            <StackPanel Spacing="8">
+                                <TextBlock Text="{Binding Details}" TextWrapping="Wrap" Foreground="#A5B4C8"/>
+                                <TextBlock Text="{Binding Vehicles}" IsVisible="{Binding HasVehicles}" TextWrapping="Wrap" Foreground="#A5B4C8"/>
+                            </StackPanel>
+                        </Expander>
+                    </StackPanel></Border>
+                </DataTemplate></ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <Border Classes="card" IsVisible="{Binding HasPersonnelResults}">
+                <Expander x:Name="PersonnelResultDetails" Classes="quiet" Header="{Binding PersonnelResultsTitle}" IsExpanded="False">
+                    <ItemsControl ItemsSource="{Binding PersonnelResults}">
+                        <ItemsControl.ItemTemplate><DataTemplate x:DataType="vm:PersonnelStationViewModel">
+                            <Expander Classes="quiet" Margin="0,3,0,9" IsExpanded="False">
+                                <Expander.Header><Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                                    <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis"/>
+                                    <TextBlock Grid.Column="1" Text="{Binding State}" Foreground="{Binding StateColor}"/>
+                                </Grid></Expander.Header>
+                                <StackPanel Spacing="8">
+                                    <TextBlock Text="{Binding Details}" TextWrapping="Wrap" Foreground="#A5B4C8"/>
+                                    <TextBlock Text="{Binding Vehicles}" IsVisible="{Binding HasVehicles}" TextWrapping="Wrap" Foreground="#A5B4C8"/>
+                                </StackPanel>
+                            </Expander>
+                        </DataTemplate></ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Expander>
+            </Border>
+        </StackPanel></ScrollViewer>
+    </Grid>
+</UserControl>

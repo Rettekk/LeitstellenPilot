@@ -1,0 +1,209 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:LeitstellenPilot.ViewModels"
+        xmlns:models="using:LeitstellenPilot.Models" xmlns:views="using:LeitstellenPilot.Views"
+        x:Class="LeitstellenPilot.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Width="1250" Height="850" MinWidth="900" MinHeight="650"
+        Title="LeitstellenPilot" Background="#141B26" Icon="avares://LeitstellenPilot/Assets/leitstellenpilot.ico">
+    <Window.Styles>
+        <Style Selector="Border.card">
+            <Setter Property="Padding" Value="18"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="Background" Value="#222C3B"/>
+        </Style>
+        <Style Selector="Border.mission-card"><Setter Property="Padding" Value="14"/></Style>
+        <Style Selector="TextBlock.heading">
+            <Setter Property="FontSize" Value="19"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+        </Style>
+        <Style Selector="Button">
+            <Setter Property="Padding" Value="14,9"/>
+        </Style>
+        <Style Selector="Button.toolbar">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="10,6"/>
+            <Setter Property="Foreground" Value="#A5B4C8"/>
+        </Style>
+        <Style Selector="Button.primary"><Setter Property="Background" Value="#1976B9"/><Setter Property="BorderBrush" Value="#1976B9"/><Setter Property="Foreground" Value="White"/></Style>
+        <Style Selector="Button.primary:pointerover /template/ ContentPresenter"><Setter Property="Background" Value="#2589CA"/></Style>
+        <Style Selector="Button.stop"><Setter Property="Background" Value="#3C2B34"/><Setter Property="BorderBrush" Value="#62414E"/><Setter Property="Foreground" Value="#F0CFD9"/></Style>
+        <Style Selector="TextBlock.status-line"><Setter Property="Foreground" Value="#A5B4C8"/></Style>
+        <Style Selector="TextBlock.status-line.warning"><Setter Property="Foreground" Value="#E9C07B"/></Style>
+        <Style Selector="Expander.quiet">
+            <Setter Property="MinHeight" Value="0"/>
+            <Setter Property="Template"><ControlTemplate TargetType="Expander">
+                <StackPanel>
+                    <ToggleButton Classes="status-details-header" Background="Transparent" BorderThickness="0" Padding="0,6" HorizontalContentAlignment="Stretch"
+                                  IsChecked="{ReflectionBinding IsExpanded, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}">
+                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                            <ContentPresenter Content="{TemplateBinding Header}" Foreground="#A5B4C8"/>
+                            <Path Grid.Column="1" Data="M 0,0 L 5,5 L 10,0" Stroke="#91A5C1" StrokeThickness="1.5" Width="10" Height="6" VerticalAlignment="Center" RenderTransformOrigin="50%,50%"/>
+                        </Grid>
+                    </ToggleButton>
+                    <ContentPresenter IsVisible="{TemplateBinding IsExpanded}" Content="{TemplateBinding Content}" Margin="0,8,0,0"/>
+                </StackPanel>
+            </ControlTemplate></Setter>
+        </Style>
+        <Style Selector="TabItem"><Setter Property="FontSize" Value="16"/></Style>
+        <Style Selector="ToggleButton.status-details-header:checked Path"><Setter Property="RenderTransform" Value="rotate(180deg)"/></Style>
+        <Style Selector="NumericUpDown.automation-input">
+            <Setter Property="Background" Value="#18212D"/>
+            <Setter Property="BorderBrush" Value="#40516A"/>
+            <Setter Property="CornerRadius" Value="5"/>
+            <Setter Property="Foreground" Value="#EDF3F7"/>
+            <Setter Property="MinHeight" Value="36"/>
+        </Style>
+    </Window.Styles>
+    <Grid RowDefinitions="Auto,Auto,*,Auto" Margin="24" RowSpacing="16">
+        <Grid ColumnDefinitions="*,Auto">
+            <StackPanel Orientation="Horizontal" Spacing="14">
+                <Image Source="avares://LeitstellenPilot/Assets/leitstellenpilot-logo.png" Width="42" Height="42"/>
+                <TextBlock Text="LeitstellenPilot" FontSize="24" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                <TextBlock Text="Standalone" Foreground="#91A5C1" FontSize="13" VerticalAlignment="Center" Margin="0,4,0,0"/>
+            </StackPanel>
+            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="18" VerticalAlignment="Center">
+                <TextBlock x:Name="GreetingText" Text="{Binding Greeting}" FontSize="16" Foreground="#CBD5E3" MaxWidth="300" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+            </StackPanel>
+        </Grid>
+        <Border Grid.Row="1" BorderBrush="#2D394A" BorderThickness="0,0,0,1" Padding="0,0,0,12">
+            <StackPanel Spacing="12">
+                <Grid ColumnDefinitions="*,*,Auto" ColumnSpacing="12" IsVisible="{Binding !IsLoggedIn}">
+                    <StackPanel Spacing="5">
+                        <TextBlock Text="Benutzername / E-Mail"/>
+                        <TextBox Text="{Binding Email}" Watermark="Anmeldung"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" Spacing="5">
+                        <TextBlock Text="Passwort"/>
+                        <TextBox Text="{Binding Password}" PasswordChar="●"/>
+                    </StackPanel>
+                    <Button Grid.Column="2" Content="Anmelden" Command="{Binding LoginCommand}" VerticalAlignment="Bottom"/>
+                </Grid>
+                <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="12" IsVisible="{Binding IsLoggedIn}">
+                    <WrapPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <WrapPanel.Styles>
+                            <Style Selector="TextBlock"><Setter Property="Margin" Value="0,3,16,3"/></Style>
+                        </WrapPanel.Styles>
+                        <TextBlock Text="{Binding CurrentCredits, StringFormat='Credits: {0}'}"/>
+                    </WrapPanel>
+                    <Button x:Name="AccountRefreshButton" Grid.Column="1" Classes="toolbar" Content="Aktualisieren" Command="{Binding RefreshCommand}" VerticalAlignment="Center"/>
+                    <Button x:Name="AccountLogoutButton" Grid.Column="2" Classes="toolbar" Content="Abmelden" Command="{Binding LogoutCommand}" VerticalAlignment="Center"/>
+                </Grid>
+                <WrapPanel IsVisible="{Binding !IsLoggedIn}">
+                    <ToggleSwitch x:Name="SavePasswordOption" Content="Passwort speichern" IsChecked="{Binding SavePassword}" Width="220" Margin="0,0,24,0"/>
+                    <ToggleSwitch x:Name="AutoLoginOption" Content="Automatisch anmelden" IsChecked="{Binding AutoLogin}" Width="235"/>
+                </WrapPanel>
+            </StackPanel>
+        </Border>
+        <Grid Grid.Row="2" RowDefinitions="Auto,*">
+<Grid Grid.Row="1" ColumnDefinitions="Auto,*">
+            <ScrollViewer x:Name="GameSidebar" Grid.Column="0" Width="300" Margin="0,0,16,0" IsVisible="{Binding IsLoggedIn}">
+                <StackPanel Spacing="16">
+                    <Border Classes="card">
+                        <StackPanel Spacing="12">
+                            <TextBlock Text="Steuerung" Classes="heading"/>
+                            <Button x:Name="BotToggleButton" Classes.primary="{Binding !IsBotRunning}" Classes.stop="{Binding IsBotRunning}" Content="{Binding BotButtonText}" Command="{Binding ToggleBotCommand}" HorizontalAlignment="Stretch"/>
+                            <ToggleSwitch x:Name="AutoAlarmOption" Content="Automatisch alarmieren" IsChecked="{Binding AutoAlarm}"/>
+                            <TextBlock x:Name="BotStatusText" Classes="status-line" Text="{Binding BotStatus}" TextWrapping="Wrap"/>
+                            <Expander x:Name="RewardDetails" Classes="quiet" Header="Status &amp; Statistik" FontSize="12" IsExpanded="False">
+                                <StackPanel Spacing="10">
+                                    <TextBlock Text="{Binding CurrentUser, StringFormat='Spielkonto: {0}'}" IsVisible="{Binding IsLoggedIn}" TextWrapping="Wrap"/>
+                                    <TextBlock Text="{Binding CurrentCoins, StringFormat='Coins: {0}'}"/>
+                                    <TextBlock Text="{Binding SessionCredits, StringFormat='Seit Start: {0} Credits'}"/>
+                                    <TextBlock Text="{Binding PollingStatus}" TextWrapping="Wrap" Foreground="#91A5C1" FontSize="12"/>
+                                    <TextBlock Text="{Binding LastAction}" TextWrapping="Wrap" Foreground="#A5B4C8" FontSize="12"/>
+                                    <Separator/>
+                                    <TextBlock Text="{Binding DailyBonusStatus}" TextWrapping="Wrap" Foreground="#A5B4C8"/>
+                                    <TextBlock Text="{Binding TaskRewardsStatus}" TextWrapping="Wrap" Foreground="#A5B4C8"/>
+                                    <TextBlock Text="{Binding PromotionStatus}" TextWrapping="Wrap" Foreground="#A5B4C8"/>
+                                    <Separator/>
+                                    <TextBlock Text="{Binding AvailableVehicles, StringFormat='Fahrzeuge frei: {0}'}"/>
+                                    <TextBlock Text="{Binding TotalVehicles, StringFormat='Fahrzeuge gesamt: {0}'}"/>
+                                    <TextBlock Text="{Binding TotalBuildings, StringFormat='Gebäude: {0}'}"/>
+                                </StackPanel>
+                            </Expander>
+                        </StackPanel>
+                    </Border>
+                    <Border x:Name="VehiclePlanCard" Classes="card" IsVisible="{Binding HasPlan}">
+                        <StackPanel Spacing="12">
+                            <TextBlock Text="Fahrzeugplan" Classes="heading"/>
+                            <TextBox Text="{Binding PlanText}" IsReadOnly="True" AcceptsReturn="True" TextWrapping="Wrap"
+                                     MinHeight="160" MaxHeight="350"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
+            <TabControl x:Name="WorkspaceTabs" Grid.Column="1" SelectedIndex="{Binding SelectedWorkspaceTab}">
+                <TabControl.Styles><Style Selector="TabItem"><Setter Property="FontSize" Value="14"/></Style></TabControl.Styles>
+                <TabItem IsVisible="{Binding IsLoggedIn}" Header="{Binding MissionCount, StringFormat='Offen ({0})'}">
+                    <ScrollViewer Margin="0,12,0,0">
+                        <ItemsControl ItemsSource="{Binding Missions}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate x:DataType="models:Mission">
+                                    <Border Classes="card mission-card" Margin="0,0,0,8">
+                                        <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto" RowSpacing="8" ColumnSpacing="12">
+                                            <StackPanel Spacing="4">
+                                                <TextBlock Text="{Binding DisplayTitle}" FontWeight="Bold" FontSize="17" TextWrapping="Wrap"/>
+                                                <TextBlock Text="{Binding DisplayAddress}" IsVisible="{Binding HasAddress}" Foreground="#A5B4C8" TextWrapping="Wrap"/>
+                                                <TextBlock Classes="status-line" Text="{Binding StatusText}" IsVisible="{Binding HasStatusText}" Classes.warning="{Binding NeedsAttention}" TextWrapping="Wrap"/>
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="1" Spacing="4" HorizontalAlignment="Right">
+                                                <TextBlock IsVisible="{Binding HasCreditEstimate}" Text="{Binding CreditsFormatted, StringFormat='{}{0} Credits'}" Foreground="#8CD0A5" HorizontalAlignment="Right"/>
+                                                <TextBlock Text="{Binding id, StringFormat='#{0}'}" FontSize="12" Foreground="#91A5C1" HorizontalAlignment="Right" AutomationProperties.Name="{Binding id, StringFormat='Einsatznummer {0}'}"/>
+                                            </StackPanel>
+                                            <WrapPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal">
+                                                <WrapPanel.Styles><Style Selector="Button"><Setter Property="Margin" Value="0,0,8,0"/></Style></WrapPanel.Styles>
+                                                <Button Content="Plan prüfen" Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).PreviewMissionCommand}" CommandParameter="{Binding}"/>
+                                                <Button Content="Alarmieren" Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).StartMissionCommand}" CommandParameter="{Binding}"/>
+                                            </WrapPanel>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </TabItem>
+                <TabItem IsVisible="{Binding IsLoggedIn}" Header="{Binding RunningMissionCount, StringFormat='Aktiv ({0})'}">
+                    <ScrollViewer Margin="0,12,0,0">
+                        <ItemsControl ItemsSource="{Binding RunningMissions}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate x:DataType="vm:RunningMissionViewModel">
+                                    <Border Classes="card mission-card" Margin="0,0,0,8">
+                                        <StackPanel Spacing="6">
+                                            <TextBlock Text="{Binding MissionName}" FontSize="17" FontWeight="Bold"/>
+                                            <TextBlock Text="{Binding StatusText}" TextWrapping="Wrap"/>
+                                            <TextBlock Text="{Binding RemainingTimeText}" Foreground="#8CD0A5"/>
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </TabItem>
+                <TabItem x:Name="ProgramTab" Header="{Binding ProgramTabTitle}">
+                    <Grid RowDefinitions="Auto,Auto,*" RowSpacing="10" Margin="0,12,0,0">
+                    <Border x:Name="ProgramSummaryCard" Classes="card" VerticalAlignment="Top" Padding="14">
+                        <TextBlock Text="{Binding CurrentBuild, StringFormat='Version: {0}'}" FontSize="12" Foreground="#A5B4C8"/>
+                    </Border>
+                    <TextBlock Grid.Row="1" Text="Protokoll" Foreground="#A5B4C8"/>
+                    <TextBox x:Name="ProgramLog" Grid.Row="2" Text="{Binding BotLogText}" IsReadOnly="True" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="80"/>
+                    </Grid>
+                </TabItem>
+                <TabItem x:Name="SettingsTab" Header="{Binding SettingsTabTitle}"><Grid>
+                    <views:AutomationSettingsView x:Name="SettingsView" IsVisible="{Binding IsLoggedIn}"/>
+                    <views:StartupSettingsView x:Name="LoggedOutStartupOptions" IsVisible="{Binding !IsLoggedIn}"/>
+                </Grid></TabItem>
+                <TabItem x:Name="PersonnelTab" Header="Personal" IsVisible="{Binding IsLoggedIn}"><views:PersonnelView x:Name="PersonnelPanel"/></TabItem>
+            </TabControl>
+        </Grid>
+        </Grid>
+        <Border Grid.Row="3" IsVisible="{Binding ShowFooter}" BorderBrush="#2D394A" BorderThickness="0,1,0,0" Padding="0,9,0,0">
+            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                <ProgressBar x:Name="BackgroundActivity" IsIndeterminate="True" IsVisible="{Binding IsBusy}" Width="32" MinWidth="0" MaxWidth="32" Height="3" VerticalAlignment="Center"/>
+                <TextBlock x:Name="AppStatusText" Grid.Column="1" Text="{Binding FooterStatus}" TextWrapping="Wrap" FontSize="12" Foreground="#A5B4C8" VerticalAlignment="Center"/>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>
