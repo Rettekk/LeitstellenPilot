@@ -22,6 +22,7 @@
     <EmbeddedResource Include="Assets\mission-field-labels.json" />
     <EmbeddedResource Include="Assets\missing-requirement-labels.json" />
     <EmbeddedResource Include="Assets\mission-types.json" />
+    <EmbeddedResource Include="..\LICENSE" LogicalName="LeitstellenPilot.Licenses.Project" />
   </ItemGroup>
 
   <ItemGroup>

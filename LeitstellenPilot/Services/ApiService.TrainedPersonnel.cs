@@ -13,6 +13,33 @@ public sealed partial class ApiService
 {
     private sealed record TrainedTrip(long MissionId,int TypeId,long BuildingId,Dictionary<string,int> Crew);
     private readonly ConcurrentDictionary<long,TrainedTrip> _trainedTrips = new();
+    private sealed record TrainingRoster(DateTime ReadAt, string SessionId, string Layout,
+        HashSet<(long Id, int State)> AvailableVehicles, IReadOnlyList<StationPerson> People);
+    private readonly ConcurrentDictionary<long, TrainingRoster> _trainingRosters = new();
+
+    private async Task<IReadOnlyList<StationPerson>> ReadTrainingRosterAsync(Vehicle vehicle,
+        IReadOnlyList<Vehicle> fleet, bool forceRefresh, CancellationToken token)
+    {
+        var session = _config.Session.SessionId;
+        var total = _buildings?.FirstOrDefault(building => building.Value<long?>("id") == vehicle.BuildingId)?.Value<int?>("personal_count");
+        var station = fleet.Where(candidate => candidate.BuildingId == vehicle.BuildingId).OrderBy(candidate => candidate.Id).ToArray();
+        var layout = total + "|" + string.Join(";", station.Select(candidate =>
+            $"{candidate.Id}:{candidate.TypeId}:{candidate.Personnel}:{candidate.MaximumPersonnel}"));
+        var available = station.Where(candidate => candidate.IsAvailable).Select(candidate => (candidate.Id, candidate.State)).ToHashSet();
+        if (!forceRefresh && _trainingRosters.TryGetValue(vehicle.BuildingId, out var cached) &&
+            cached.SessionId == session && cached.Layout == layout && UtcNow >= cached.ReadAt && UtcNow - cached.ReadAt < TimeSpan.FromMinutes(2) &&
+            available.IsSubsetOf(cached.AvailableVehicles))
+            return cached.People;
+
+        var page = PersonnelPageParser.Read(await GetTextAsync($"/vehicles/{vehicle.Id}/zuweisung", token),
+            vehicle.Id, vehicle.BuildingId, _httpClient.BaseAddress!);
+        if (!string.IsNullOrEmpty(page.Token)) Logger?.RegisterSecret(page.Token);
+        if (total.HasValue && total != page.People.Count)
+            throw new FormatException("Personalliste für die Ausbildungsprüfung unvollständig; keine Ausbildungsbesatzung geschätzt.");
+        var people = page.People.ToArray();
+        _trainingRosters[vehicle.BuildingId] = new(UtcNow, session, layout, available, people);
+        return people;
+    }
 
     private void ForgetEndedTrainedTrips(IReadOnlyCollection<Vehicle> fleet)
     {
@@ -31,7 +58,7 @@ public sealed partial class ApiService
     }
 
     private async Task ReadTrainedPersonnelAsync(Mission mission, EinsatzInfo? specification, MissionDetails details,
-        IReadOnlyList<Vehicle> fleet, CancellationToken token)
+        IReadOnlyList<Vehicle> fleet, CancellationToken token, bool forceRefresh = true)
     {
         var demands = TrainedPersonnelRequirements.Demands(details, specification, _rules);
         if (demands.Count == 0) return;
@@ -64,15 +91,11 @@ public sealed partial class ApiService
             .OrderByDescending(Preferred).ThenBy(v => details.VehicleTravelSeconds.GetValueOrDefault(v.Id, int.MaxValue)).ThenBy(v => v.Order).ThenBy(v => v.Id).ToArray();
         bool Covered() => demands.All(demand => incoming.Concat(candidates.Where(v => details.TrainedCrewByVehicleId.ContainsKey(v.Id))).DistinctBy(v => v.Id)
             .Sum(v => TrainedPersonnelRequirements.ConfirmedCrew(demand.Key, v, details, _rules)) >= demand.Value);
-        var pages=new Dictionary<long,PersonnelPage>();
-        async Task<PersonnelPage> ReadStation(Vehicle vehicle)
+        var pages=new Dictionary<long,IReadOnlyList<StationPerson>>();
+        async Task<IReadOnlyList<StationPerson>> ReadStation(Vehicle vehicle)
         {
             if (pages.TryGetValue(vehicle.BuildingId,out var cached)) return cached;
-            var page=PersonnelPageParser.Read(await GetTextAsync($"/vehicles/{vehicle.Id}/zuweisung",token),vehicle.Id,vehicle.BuildingId,_httpClient.BaseAddress!);
-            if (!string.IsNullOrEmpty(page.Token)) Logger?.RegisterSecret(page.Token);
-            if (_buildings?.FirstOrDefault(b=>b.Value<long?>("id")==vehicle.BuildingId)?.Value<int?>("personal_count") is { } total && total!=page.People.Count)
-                throw new FormatException("Personalliste für die Ausbildungsprüfung unvollständig; keine Ausbildungsbesatzung geschätzt.");
-            return pages[vehicle.BuildingId]=page;
+            return pages[vehicle.BuildingId]=await ReadTrainingRosterAsync(vehicle, fleet, forceRefresh, token);
         }
         foreach (var vehicle in incoming.Where(vehicle=>rules.Any(rule=>CanCarry(rule,vehicle))))
         {
@@ -80,7 +103,7 @@ public sealed partial class ApiService
             var applicable=demands.Where(demand=>CanCarry(_rules.Trainings[demand.Key],vehicle)).ToArray();
             if (applicable.All(demand=>TrainedPersonnelRequirements.ConfirmedCrew(demand.Key,vehicle,details,_rules)>=demand.Value)) continue;
             var page=await ReadStation(vehicle);
-            var bound=page.People.Where(person=>person.VehicleId==vehicle.Id).ToArray();
+            var bound=page.Where(person=>person.VehicleId==vehicle.Id).ToArray();
             var hasActual=details.CrewByVehicleId.TryGetValue(vehicle.Id,out var actual);
             var maximum=Math.Max(0,hasActual?actual:vehicle.MaximumPersonnel??_vehicleTypes[vehicle.TypeId.ToString()].Value<int?>("maxPersonnel")??0);
             var confirmed=new Dictionary<string,int>(); var uncertain=new Dictionary<string,int>();
@@ -105,14 +128,14 @@ public sealed partial class ApiService
         {
             if (Covered()) break;
             var page = await ReadStation(group.First());
-            var free = page.People.Where(p => p.Available && p.VehicleId == null).ToDictionary(p => p.Id);
+            var free = page.Where(p => p.Available && p.VehicleId == null).ToDictionary(p => p.Id);
             foreach (var vehicle in group)
             {
                 var maximum = Math.Max(0, vehicle.MaximumPersonnel ?? _vehicleTypes[vehicle.TypeId.ToString()].Value<int?>("maxPersonnel") ?? 0);
                 var counts = new Dictionary<string, int>();
                 foreach (var rule in rules.Where(r => CanCarry(r, vehicle)))
                 {
-                    var boundPeople = page.People.Where(p => p.Available && p.VehicleId == vehicle.Id).ToArray();
+                    var boundPeople = page.Where(p => p.Available && p.VehicleId == vehicle.Id).ToArray();
                     var bound = boundPeople.Count(p => p.Training.Contains(rule.Course));
                     if (!rule.RequiresEveryone(vehicle.TypeId))
                     {

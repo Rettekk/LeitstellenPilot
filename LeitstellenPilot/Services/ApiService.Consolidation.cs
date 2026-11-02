@@ -39,10 +39,13 @@ public sealed partial class ApiService
             var budget = StationCrewBudgets(fleet, target, details);
             if (planner.Build(target, spec, details, PlanningFleet(fleet), reserved, budget).IsComplete) return null;
             var donors = new List<Donor>();
+            var borrowable = fleet.Where(vehicle => Borrowable(vehicle, fleet)).ToArray();
+            var unknownSource = borrowable.Any(vehicle => string.IsNullOrEmpty(vehicle.TargetType) || vehicle.TargetId.GetValueOrDefault() <= 0);
+            var donorSources = borrowable.Select(vehicle => vehicle.TargetId.GetValueOrDefault()).ToHashSet();
             foreach (var source in board.Where(source => source.Id != target.Id && !source.sw && source.FleetBlockReason.Length == 0 &&
                          source.patients_count == 0 && source.prisoners_count == 0 &&
                          !OwnLoans.Any(loan => loan.SourceMissionId == source.Id || loan.TargetMissionId == source.Id) &&
-                         fleet.Any(vehicle => Borrowable(vehicle, fleet)) &&
+                         (unknownSource || donorSources.Contains(source.Id)) &&
                          (source.vehicle_state > 0 || source.HasMissingVehicles || source.HasLiveRequirements || source.PlanningProblem.Length > 0))
                      .OrderBy(source => source.average_credits).ThenByDescending(source => source.Id).Take(12))
             {

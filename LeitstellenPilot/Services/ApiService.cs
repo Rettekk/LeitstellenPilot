@@ -196,6 +196,7 @@ public sealed partial class ApiService : IGameApi, IFleetApi, ITransportApi, IDa
         _eventItemOwnMissions = new(); _eventItemOffers.Clear(); _eventItemSession = ""; _lastEventItemInspection = 0;
         _pendingVehicles.Clear();
         _trainedTrips.Clear();
+        _trainingRosters.Clear();
         _pendingTransports.Clear();
         _transportChecks.Clear();
         _patientWaits.Clear();
@@ -703,7 +704,9 @@ public sealed partial class ApiService : IGameApi, IFleetApi, ITransportApi, IDa
             var specification = details.TypeKey != null ? catalog.GetValueOrDefault(details.TypeKey) : null;
             if (!preview && automatic && PlannedAutomationWait(mission, specification) is { } durationWait)
             { SkipPlannedMission(mission, specification, durationWait); return new(false, false, durationWait); }
-            await ReadTrainedPersonnelAsync(mission, specification, details, vehicles, token);
+            // Reuse read-only roster data for automatic drafts. The check after
+            // the action pause always reads fresh data before submitting an alarm.
+            await ReadTrainedPersonnelAsync(mission, specification, details, vehicles, token, forceRefresh: !automatic);
             await PrepareApproachesAsync(mission, specification, details, vehicles, token);
             plan = requirePlanned ? BuildPlannedPlan(mission, specification, details, vehicles, out _) :
                 CreateVehiclePlanner().Build(mission, specification, details, PlanningFleet(vehicles), ReservedForMission(mission.Id), StationCrewBudgets(vehicles, mission, details));

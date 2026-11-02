@@ -22,12 +22,7 @@ try {
         try {
             $files = @(
                 @{ Path=$releaseBinary; Name='LeitstellenPilot'; Mode=493 },
-                @{ Path=(Join-Path $releaseRoot 'deploy/linux/config.example.json'); Name='config.example.json'; Mode=384 },
-                @{ Path=(Join-Path $releaseRoot 'deploy/linux/leitstellenpilot.service'); Name='leitstellenpilot.service'; Mode=420 },
-                @{ Path=(Join-Path $releaseRoot 'docs/Standalone.md'); Name='README-Linux.md'; Mode=420 },
-                @{ Path=(Join-Path $releaseRoot 'THIRD_PARTY_NOTICES.md'); Name='THIRD_PARTY_NOTICES.md'; Mode=420 },
-                @{ Path=(Join-Path $releaseRoot 'THIRD_PARTY_LICENSES.txt'); Name='THIRD_PARTY_LICENSES.txt'; Mode=420 },
-                @{ Path=(Join-Path $releaseRoot 'LICENSE'); Name='LICENSE'; Mode=420 }
+                @{ Path=(Join-Path $releaseRoot 'deploy/linux/config.example.json'); Name='config.example.json'; Mode=384 }
             )
             foreach ($file in $files) {
                 $entry = [System.Formats.Tar.PaxTarEntry]::new([System.Formats.Tar.TarEntryType]::RegularFile, ('LeitstellenPilot-linux-x64/' + $file.Name))

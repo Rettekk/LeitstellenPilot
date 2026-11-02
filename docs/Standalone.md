@@ -4,6 +4,8 @@
 
 Die Windows-EXE und das Linux-Programm sind jeweils eigenständig. Für grafische Linux-Systeme werden die üblichen X11-/Fontbibliotheken benötigt; auf Ubuntu/Debian insbesondere `libx11-6`, `libice6`, `libsm6` und `libfontconfig1`. Ein Server ohne Desktop verwendet `--headless`.
 
+Die Downloadpakete enthalten nur das Programm und `config.example.json`. Lizenz- und Quellenhinweise sind mit `--licenses` im Programm abrufbar. Die Vorlage kann explizit mit `--config ./config.example.json` verwendet werden. Unter Windows startet sie die Oberfläche, unter Linux den Headless-Betrieb; `--gui` beziehungsweise `--headless` überschreibt diese Auswahl. Die systemd-Vorlage bleibt im Quellcode unter `deploy/linux/leitstellenpilot.service` verfügbar.
+
 Der Programmstart führt direkt zur Spielanmeldung. Es wird kein Betreiberkonto und keine Gerätefreigabe benötigt. Der Spielbenutzername erscheint nach der Anmeldung als Begrüßung. Updates werden manuell installiert, nachdem das Programm beziehungsweise der Dienst beendet wurde.
 
 ## Konfigurationsdateien

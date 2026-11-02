@@ -26,6 +26,7 @@ namespace LeitstellenPilot
         {
             var options = LaunchOptions.Parse(args); LaunchOptions.Configure(options);
             if (options.Help) { Console.WriteLine(LaunchOptions.Usage); return 0; }
+            if (options.ShowLicenses) { WriteLicenses(); return 0; }
             StartupArguments.ReadArguments(args);
             var config = new ConfigService();
             if (options.InitializeConfig)
@@ -51,6 +52,17 @@ namespace LeitstellenPilot
                 throw new InvalidOperationException("Kein grafischer Desktop verfügbar. Mit --headless oder Headless: true starten.");
             BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
             return 0;
+        }
+        private static void WriteLicenses()
+        {
+            Console.OutputEncoding = System.Text.Encoding.UTF8;
+            foreach (var name in new[] { "Project", "Notices", "Dependencies" })
+            {
+                using var resource = typeof(Program).Assembly.GetManifestResourceStream("LeitstellenPilot.Licenses." + name)
+                    ?? throw new InvalidOperationException("Enthaltene Lizenzhinweise fehlen.");
+                using var reader = new StreamReader(resource);
+                Console.WriteLine(reader.ReadToEnd());
+            }
         }
         private static FileStream AcquireProfile(ConfigService config)
         {

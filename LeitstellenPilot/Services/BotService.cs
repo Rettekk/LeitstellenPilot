@@ -34,7 +34,9 @@ public sealed partial class BotService
     private readonly Dictionary<long, (string Signature, DateTime Confirmed)> _coverage = new();
     private readonly Dictionary<long, (string Signature, string Problem, string StaffingWait, bool HasUnrecognizedRequirements)> _shortfalls = new();
     private readonly Dictionary<long, DateTime> _detailReviewDue = new();
-    private readonly Dictionary<long, (string Signature, string Fleet, DateTime Until)> _unchangedPlans = new();
+    private sealed record WaitingPlan(string Signature, string Fleet, DateTime Until, DateTime PriorityReviewAt,
+        int ApproachMinutes, IReadOnlySet<string> AvailableVehicles);
+    private readonly Dictionary<long, WaitingPlan> _unchangedPlans = new();
     private List<Mission> _missions = new();
     private readonly SemaphoreSlim _cycleGate = new(1, 1);
     private CancellationTokenSource? _cancellation;
@@ -690,8 +692,12 @@ public sealed partial class BotService
     private int DetailReviewInterval => Math.Clamp(_config.Config.BotSettings.DetailReviewIntervalSeconds, 10, 120);
     private int DrawDetailReviewInterval() => _random(DetailReviewInterval,
         Math.Clamp(_config.Config.BotSettings.MaxDetailReviewIntervalSeconds, DetailReviewInterval, 120) + 1);
-    private static string PlanningFleetSignature(IEnumerable<Vehicle> fleet) => string.Join(";", fleet.OrderBy(vehicle => vehicle.Id)
-        .Select(vehicle => $"{vehicle.Id}:{vehicle.TypeId}:{vehicle.State}:{vehicle.TargetType}:{vehicle.TargetId}:{vehicle.QueuedMissionId}:{vehicle.Personnel}:{vehicle.MaximumPersonnel}:{vehicle.BuildingId}"));
+    private static string PlanningVehicleKey(Vehicle vehicle) =>
+        $"{vehicle.Id}:{vehicle.TypeId}:{vehicle.State}:{vehicle.TargetType}:{vehicle.TargetId}:{vehicle.QueuedMissionId}:{vehicle.Personnel}:{vehicle.MaximumPersonnel}:{vehicle.BuildingId}";
+    private static string PlanningFleetSignature(IEnumerable<Vehicle> fleet) => string.Join(";", fleet.OrderBy(vehicle => vehicle.Id).Select(PlanningVehicleKey));
+    private HashSet<string> AvailablePlanningVehicles(IEnumerable<Vehicle> fleet) => fleet
+        .Where(vehicle => vehicle.IsAvailable || _config.Config.BotSettings.ReassignBlockedMissions && vehicle.State == 4)
+        .Select(PlanningVehicleKey).ToHashSet();
 
     private async Task<bool> DispatchBatchAsync(CancellationToken token, ISet<long> checkedMissions, bool urgentOnly = false, bool forcePlanReview = false)
     {
@@ -701,7 +707,9 @@ public sealed partial class BotService
         var alarmLimit = Math.Clamp(_config.Config.BotSettings.MaxAlarmsPerCycle, 1, 100);
         var fleetApi = _api as IFleetApi;
         var fleetSnapshot = fleetApi == null ? null : await fleetApi.GetVehiclesAsync(token: token);
-        var planningFleet = (fleetSnapshot == null ? "?" : PlanningFleetSignature(fleetSnapshot)) + "|approach:" + ApproachPolicy.NormalizeMinutes(_config.Config.BotSettings.MaxApproachMinutes);
+        var approach = ApproachPolicy.NormalizeMinutes(_config.Config.BotSettings.MaxApproachMinutes);
+        var planningFleet = (fleetSnapshot == null ? "?" : PlanningFleetSignature(fleetSnapshot)) + "|approach:" + approach;
+        var availableVehicles = AvailablePlanningVehicles(fleetSnapshot ?? []);
         var hasFreeVehicles = fleetSnapshot == null || fleetSnapshot.Any(v => v.IsAvailable);
         if (fleetSnapshot != null) lock (_stateSync) _hasTransportRequests = fleetSnapshot.Any(v => v.State == 5);
         Mission[] batch;
@@ -711,7 +719,11 @@ public sealed partial class BotService
             batch = MissionPriority.Order(_missions, _config.Config.BotSettings).Where(mission => !checkedMissions.Contains(mission.Id) &&
                 (!urgentOnly || mission.HasMissingVehicles || mission.HasLiveRequirements ||
                     mission.RequiresDetailsReview && (mission.vehicle_state > 0 || _running.ContainsKey(mission.Id))))
-                .OrderByDescending(mission => (_api as IReassignmentApi)?.FocusMissionId == mission.Id).ToArray();
+                .OrderByDescending(mission => (_api as IReassignmentApi)?.FocusMissionId == mission.Id)
+                .ThenBy(mission => mission.vehicle_state == 0 && !_running.ContainsKey(mission.Id) &&
+                    _unchangedPlans.TryGetValue(mission.Id, out var waiting) && waiting.Signature == mission.CoverageSignature &&
+                    waiting.ApproachMinutes == approach && UtcNow < waiting.PriorityReviewAt &&
+                    availableVehicles.IsSubsetOf(waiting.AvailableVehicles)).ToArray();
         }
         foreach (var mission in batch)
         {
@@ -754,7 +766,8 @@ public sealed partial class BotService
             ApplyDispatchResult(mission, result);
             lock (_stateSync)
             {
-                if (!result.Success && !result.Sent) _unchangedPlans[mission.Id] = (mission.CoverageSignature, planningFleet, UtcNow.AddSeconds(DrawDetailReviewInterval()));
+                if (!result.Success && !result.Sent) _unchangedPlans[mission.Id] = new(mission.CoverageSignature, planningFleet,
+                    UtcNow.AddSeconds(DrawDetailReviewInterval()), UtcNow.AddMinutes(2), approach, availableVehicles);
                 else _unchangedPlans.Remove(mission.Id);
             }
             if (!result.Success && !result.Sent && result.Plan is { IsComplete: false } &&
@@ -778,7 +791,10 @@ public sealed partial class BotService
             if (result.Sent && fleetApi != null)
             {
                 var updatedFleet = await fleetApi.GetVehiclesAsync(token: token);
-                hasFreeVehicles = updatedFleet.Any(v => v.IsAvailable); planningFleet = PlanningFleetSignature(updatedFleet);
+                hasFreeVehicles = updatedFleet.Any(v => v.IsAvailable);
+                approach = ApproachPolicy.NormalizeMinutes(_config.Config.BotSettings.MaxApproachMinutes);
+                planningFleet = PlanningFleetSignature(updatedFleet) + "|approach:" + approach;
+                availableVehicles = AvailablePlanningVehicles(updatedFleet);
             }
             if (!_api.IsLoggedIn) break;
             if (alarmsSent >= alarmLimit)

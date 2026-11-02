@@ -16,6 +16,8 @@ Standalone-Client für Leitstellenspiel.de mit grafischer Oberfläche und Headle
 
 Die fertigen Pakete enthalten die .NET-Laufzeit. Für den Betrieb ist keine separate .NET-Installation erforderlich. Verfügbar sind Windows x64 und Linux x64.
 
+Jedes Paket enthält nur das Programm und `config.example.json`. Die Vorlage wird mit `--config ./config.example.json` verwendet; ohne diesen Parameter verwendet das Programm sein vorhandenes Benutzerprofil. Lizenz- und Quellenhinweise sind im Programm enthalten und mit `--licenses` abrufbar.
+
 ### Windows
 
 `LeitstellenPilot-windows-x64.zip` entpacken, `LeitstellenPilot.exe` starten und mit dem Spielkonto anmelden.

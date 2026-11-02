@@ -205,7 +205,7 @@ public sealed partial class ApiService
         }
         catch (Exception ex) when (ex is OperationCanceledException or HttpRequestException or InvalidOperationException or FormatException or IOException)
         { report.Interrupted = true; report.StopReason = ex.Message; return report; }
-        finally { _personnelAccount = null; _dispatchGate.Release(); }
+        finally { _trainingRosters.Clear(); _personnelAccount = null; _dispatchGate.Release(); }
     }
 
     private static bool SameStation(IEnumerable<Vehicle> before, IEnumerable<Vehicle> after) =>

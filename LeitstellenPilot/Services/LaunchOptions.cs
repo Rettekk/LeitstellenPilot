@@ -5,7 +5,7 @@ using LeitstellenPilot.Models;
 namespace LeitstellenPilot.Services;
 
 public sealed record LaunchOptions(bool? Headless = null, string? ConfigPath = null, bool InitializeConfig = false,
-    bool Start = false, bool Help = false, bool VerifyEnvironment = false, bool LoginOnly = false)
+    bool Start = false, bool Help = false, bool VerifyEnvironment = false, bool LoginOnly = false, bool ShowLicenses = false)
 {
     public static LaunchOptions Current { get; private set; } = new();
     public static void Configure(LaunchOptions options) { Current = options; AppPaths.Configure(options.ConfigPath); }
@@ -29,6 +29,7 @@ public sealed record LaunchOptions(bool? Headless = null, string? ConfigPath = n
                 case "--start": result = result with { Start = true }; break;
                 case "--login": result = result with { LoginOnly = true }; break;
                 case "--check-environment": result = result with { VerifyEnvironment = true }; break;
+                case "--licenses": result = result with { ShowLicenses = true }; break;
                 case "--help": case "-h": result = result with { Help = true }; break;
                 case "--windows-autostart": break;
                 default: throw new ArgumentException("Unbekannte Option: " + args[i]);
@@ -42,5 +43,6 @@ public sealed record LaunchOptions(bool? Headless = null, string? ConfigPath = n
         "  --login               Nur am Spiel anmelden und die Sitzung geschützt speichern\n" +
         "  --start               Bot nach der Spielanmeldung starten\n" +
         "  --check-environment   Laufzeit und geschützte lokale Speicherung prüfen\n" +
+        "  --licenses            Enthaltene Lizenz- und Quellenhinweise anzeigen\n" +
         "Passwort für die erste Anmeldung: LEITSTELLENPILOT_PASSWORD oder gespeicherte Anmeldung.\n";
 }

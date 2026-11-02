@@ -1,7 +1,7 @@
 {
   "kind": "leitstellenpilot.dispatch-rules",
   "schema": 1,
-  "revision": 2026102201,
+  "revision": 2026110101,
   "capabilities": {
     "firetrucks": [
       0,
@@ -884,7 +884,8 @@
       "Polizeimotorräder"
     ],
     "police_service_group_leader": [
-      "Funkstreifenwagen (DGL)"
+      "Funkstreifenwagen (DGL)",
+      "Funkstreifenwagen (Dienstgruppenleitung)"
     ],
     "police_speaker": [
       "LauKw"
@@ -942,7 +943,8 @@
       "Anh FüLa"
     ],
     "thw_dle": [
-      "Anh DLE"
+      "Anh DLE",
+      "Anhänger Drucklufterzeugung"
     ],
     "thw_mzkw": [
       "MzGW (FGr N)"
