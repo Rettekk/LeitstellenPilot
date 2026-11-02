@@ -1,0 +1,11 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:LeitstellenPilot.ViewModels"
+             x:Class="LeitstellenPilot.Views.StartupSettingsView" x:DataType="vm:MainWindowViewModel">
+    <ScrollViewer Margin="0,12,0,0"><Border Classes="card" VerticalAlignment="Top"><StackPanel Spacing="14">
+        <TextBlock Text="Start und Anmeldung" Classes="heading"/>
+        <Grid ColumnDefinitions="*,Auto" IsVisible="{Binding WindowsStartupSupported}"><ToggleSwitch x:Name="WindowsAutostartOption" IsChecked="{Binding StartWithWindows}" IsEnabled="{Binding CanChangeWindowsStartup}"><TextBlock Text="Programm und Bot mit Windows starten" TextWrapping="Wrap"/></ToggleSwitch></Grid>
+        <Grid ColumnDefinitions="*,Auto"><ToggleSwitch Content="Automatisch anmelden" IsChecked="{Binding AutoLogin}"/></Grid>
+        <Grid ColumnDefinitions="*,Auto"><ToggleSwitch Content="Passwort speichern" IsChecked="{Binding SavePassword}"/></Grid>
+        <TextBlock Text="{Binding WindowsStartupStatus}" IsVisible="{Binding HasWindowsStartupStatus}" Foreground="#E9C07B" TextWrapping="Wrap"/>
+    </StackPanel></Border></ScrollViewer>
+</UserControl>

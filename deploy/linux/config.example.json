@@ -1,0 +1,36 @@
+{
+  "Headless": true,
+  "TimeZone": "Europe/Berlin",
+  "LoginIdentifier": "",
+  "Password": "",
+  "BotSettings": {
+    "AutoStart": true,
+    "AutoLogin": true,
+    "AutoAlarm": true,
+    "MaxConcurrentMissions": 4,
+    "MaxApproachMinutes": 20,
+    "PacingDefaultsVersion": 2,
+    "PollingDefaultsVersion": 2,
+    "ScanIntervalConfigured": true,
+    "ScanIntervalSeconds": 10,
+    "MaxScanIntervalSeconds": 20,
+    "MinActionDelaySeconds": 3,
+    "MaxActionDelaySeconds": 11,
+    "MinPersonnelActionDelaySeconds": 3,
+    "MaxPersonnelActionDelaySeconds": 11,
+    "AutoTransport": true,
+    "AutoCollectEventItems": false,
+    "HospitalWaitMinutes": 10
+  },
+  "StationUpgrades": {
+    "Enabled": false,
+    "Order": 0,
+    "TargetLevel": 3,
+    "ReserveCredits": 100000,
+    "DailyBudgetCredits": 100000,
+    "IntervalMinutes": 15,
+    "FireStations": true,
+    "PoliceStations": true,
+    "RescueStations": true
+  }
+}

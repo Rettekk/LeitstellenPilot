@@ -1,0 +1,10 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="LeitstellenPilot.App"
+             RequestedThemeVariant="Dark">
+
+<Application.Styles>
+        <FluentTheme />
+        <StyleInclude Source="avares://LeitstellenPilot/Styles/SettingSwitches.axaml"/>
+    </Application.Styles>
+</Application>

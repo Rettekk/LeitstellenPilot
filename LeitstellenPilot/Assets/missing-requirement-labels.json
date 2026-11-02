@@ -1,0 +1,21 @@
+{
+  "source": "https://github.com/LSS-Manager/LSSM-V.4/blob/dev/src/modules/extendedCallWindow/i18n/de_DE.json",
+  "checkedAt": "2026-10-11",
+  "description": "German game requirement names verified against LSSM. Capability and conditional replacement rules remain in our planner.",
+  "aliases": {
+    "helicopter_bucket": ["Außenlastbehälter"],
+    "oneof_thw_gkw_or_mzkw": ["Fahrzeug des THW (MzKW oder GKW)"],
+    "water_damage_pump": ["Feuerlöschpumpe (z. B. LF)", "Feuerlöschpumpen (z. B. LF)"],
+    "arff": ["Flugfeldlöschfahrzeug", "Flugfeldlöschfahrzeuge"],
+    "oneof_police_patrol_or_civil_patrol_or_motorcycle": ["Funkstreifenwagen oder Zivilstreifenwagen oder Polizeimotorräder"],
+    "thw_gkw": ["Gerätekraftwagen (GKW)"],
+    "thw_lkw": ["LKW Kipper (LKW K 9)"],
+    "oneof_fire_engine_or_rescue_or_oil_equipment": ["Löschfahrzeug, Rüstwagen oder Gerätewagen Öl"],
+    "oneof_ambulance_or_ktw_or_ktwb": ["RTW oder KTW oder KTW-B"],
+    "thw_brmg_r": ["Radlader (BRmG R)"],
+    "thw_mtwtz": ["THW-Einsatzleitung (MTW-TZ)"],
+    "coastal_boat": ["Seenotrettungsboot", "Seenotrettungsboote"],
+    "care_service": ["Bt-Kombi", "Bt-Kombis"],
+    "care_service_equipment": ["Betreuungs- und Verpflegungsausstattung", "Betreuungs- und Verpflegungsausstattungen"]
+  }
+}

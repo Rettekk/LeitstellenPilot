@@ -1,0 +1,35 @@
+<Styles xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Style Selector="ToggleSwitch">
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="MinHeight" Value="36"/>
+        <Setter Property="Foreground" Value="#EDF3F7"/>
+        <Setter Property="OnContent" Value="{x:Null}"/>
+        <Setter Property="OffContent" Value="{x:Null}"/>
+        <Setter Property="Template">
+            <ControlTemplate TargetType="ToggleSwitch">
+                <Border x:Name="SwitchFocus" BorderBrush="Transparent" BorderThickness="1" CornerRadius="5" Padding="1" Background="Transparent">
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="14" MinHeight="32">
+                        <ContentPresenter x:Name="PART_ContentPresenter" Content="{TemplateBinding Content}"
+                                          ContentTemplate="{TemplateBinding ContentTemplate}" RecognizesAccessKey="True"
+                                          VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+                        <Grid Grid.Column="1" Width="38" Height="22" VerticalAlignment="Center">
+                            <Border x:Name="SwitchTrack" Background="#536173" CornerRadius="11"/>
+                            <!-- These native template parts preserve click, keyboard and drag behavior. -->
+                            <Canvas x:Name="PART_SwitchKnob" Width="16" Height="22" HorizontalAlignment="Left">
+                                <Grid x:Name="PART_MovingKnobs" Width="22" Height="22" Background="Transparent">
+                                    <Ellipse Width="16" Height="16" Fill="White"/>
+                                </Grid>
+                            </Canvas>
+                        </Grid>
+                    </Grid>
+                </Border>
+            </ControlTemplate>
+        </Setter>
+    </Style>
+    <Style Selector="ToggleSwitch:checked /template/ Border#SwitchTrack"><Setter Property="Background" Value="#008FE0"/></Style>
+    <Style Selector="ToggleSwitch:pointerover /template/ Border#SwitchTrack"><Setter Property="Background" Value="#687D94"/></Style>
+    <Style Selector="ToggleSwitch:checked:pointerover /template/ Border#SwitchTrack"><Setter Property="Background" Value="#1BA5ED"/></Style>
+    <Style Selector="ToggleSwitch:focus-visible /template/ Border#SwitchFocus"><Setter Property="BorderBrush" Value="#6FBDF0"/></Style>
+    <Style Selector="ToggleSwitch:disabled"><Setter Property="Opacity" Value="0.45"/></Style>
+</Styles>
